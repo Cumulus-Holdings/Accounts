@@ -1,6 +1,6 @@
     FROM nodered/node-red:latest
     USER root
-    RUN npm install node-red-contrib-mongodb4 bson
+    RUN npm install node-red-contrib-mongodb4 node-red-contrib-objectid bson
     
     # Remove the next line once integrated with PVC
     COPY flows.json /data
