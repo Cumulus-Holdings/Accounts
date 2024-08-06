@@ -1,5 +1,5 @@
 # Accounts
 
-test
+To deploy this application, run the following command:
 
-test
+oc apply -f k8s/
