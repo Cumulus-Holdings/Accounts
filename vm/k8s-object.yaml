@@ -1,0 +1,38 @@
+#cloud-config
+user: admin
+password: redhat123
+chpasswd:
+  expire: false
+rh_subscription:
+  activation-key: rhel-mongodb
+  org: 11009103
+yum_repos:
+  mongodb-org-7.0:
+    baseurl: https://repo.mongodb.org/yum/redhat/9/mongodb-org/7.0/x86_64/
+    enabled: true
+    gpgcheck: true
+    gpgkey: https://www.mongodb.org/static/pgp/server-7.0.asc
+    name: MongoDB Repository
+packages:
+  - mongodb-org
+write_files:
+- content: |
+    net:
+      bindIp: 0.0.0.0
+    storage:
+      dbPath: /var/lib/mongo
+  path: /etc/mongod.conf
+- content: |
+    use cumulus-bank;
+    db.createCollection("accounts");
+    db.createUser({
+      user: "admin",
+      pwd: "redhat123",
+      roles: [{ role: "readWrite", db: "cumulus-bank" }]
+    });
+  path: /tmp/setup_mongo.js
+runcmd:
+  - "systemctl enable --now mongod.service"
+  - "sleep 5"
+  - "echo 'use cumulus-bank;' | mongo"
+  - "mongo < /tmp/setup_mongo.js"
